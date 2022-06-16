@@ -1,27 +1,28 @@
 import { Cat } from '../../models/Cat';
-import { ActionType } from '../../utils/types';
+import { ActionType, DispatchObject } from '../../utils/types';
 import { getCatsData } from './cat.api';
 
-export const loadCats = () => async (dispatch: React.Dispatch<any>) => {
-  dispatch(setLoading(true));
+export const loadCats =
+  () => async (dispatch: React.Dispatch<DispatchObject>) => {
+    dispatch(setLoading(true));
 
-  const cats = await getCatsData();
-  dispatch(setCats(cats));
+    const cats = await getCatsData();
+    dispatch(setCats(cats));
 
-  dispatch(setLoading(false));
-};
+    dispatch(setLoading(false));
+  };
 
 export const setLoading = (isLoading: boolean) =>
   ({
     type: 'set-loading',
     isLoading,
-  } as const);
+  } as DispatchObject);
 
 export const setCats = (cats: Cat[]) =>
   ({
     type: 'set-cats',
     cats,
-  } as const);
+  } as DispatchObject);
 
 export type CatActions =
   | ActionType<typeof setLoading>

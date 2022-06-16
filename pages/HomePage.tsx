@@ -9,11 +9,12 @@ export const HomePage: React.FC = () => {
   const { state, dispatch } = React.useContext(AppContext);
 
   React.useEffect(() => {
-    dispatch(loadCats);
+    console.log('EFFECT');
+    dispatch(loadCats());
   }, []);
 
   const handleOnClick = () => {
-    dispatch(setLoading(!state.cat.isLoading));
+    dispatch(setLoading, !state.cat.isLoading);
   };
 
   return (

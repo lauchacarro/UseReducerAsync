@@ -5,14 +5,12 @@ import { AppContext } from './AppContext';
 
 type FuncType = (dispatch: React.Dispatch<any>) => Promise<DispatchObject>;
 
-type ObjectAction = { type: string };
-
-type FuncOrObjectType = FuncType | ObjectAction;
+type FuncOrObjectType = FuncType | DispatchObject;
 
 function isObjectAction(
   dispatchFunc: FuncOrObjectType
-): dispatchFunc is ObjectAction {
-  return (<ObjectAction>dispatchFunc)?.type !== undefined;
+): dispatchFunc is DispatchObject {
+  return (<DispatchObject>dispatchFunc)?.type !== undefined;
 }
 
 function isFuncType(dispatchFunc: any): dispatchFunc is FuncType {
@@ -21,7 +19,7 @@ function isFuncType(dispatchFunc: any): dispatchFunc is FuncType {
 
 export function wrapAsync(dispatch: Dispatch<DispatchObject>) {
   return (func: any, ...args: any) => {
-    if (typeof func === 'object' && func.type) {
+    if (isObjectAction(func)) {
       dispatch(func);
       return;
     }
@@ -32,7 +30,7 @@ export function wrapAsync(dispatch: Dispatch<DispatchObject>) {
 
     const dispatchFunc = func(...args);
 
-    if (typeof dispatchFunc === 'object' && dispatchFunc.type) {
+    if (isObjectAction(dispatchFunc)) {
       dispatch(dispatchFunc);
       return;
     }
