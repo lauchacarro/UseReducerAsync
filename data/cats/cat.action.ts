@@ -6,13 +6,9 @@ export const loadCats = () => async (dispatch: React.Dispatch<any>) => {
   dispatch(setLoading(true));
 
   const cats = await getCatsData();
+  dispatch(setCats(cats));
 
   dispatch(setLoading(false));
-
-  return {
-    type: 'set-cats',
-    cats,
-  };
 };
 
 export const setLoading = (isLoading: boolean) =>
