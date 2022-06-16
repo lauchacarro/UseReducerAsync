@@ -3,7 +3,7 @@ import { Dispatch } from 'react';
 import { ActionType, DispatchObject } from '../utils/types';
 import { AppContext } from './AppContext';
 
-type FuncType = () => (dispatch: React.Dispatch<any>) => Promise<void>;
+type FuncType = (dispatch: React.Dispatch<any>) => Promise<DispatchObject>;
 
 type ObjectAction = { type: string };
 
@@ -15,11 +15,19 @@ function isObjectAction(
   return (<ObjectAction>dispatchFunc)?.type !== undefined;
 }
 
+function isFuncType(dispatchFunc: any): dispatchFunc is FuncType {
+  return (<FuncType>dispatchFunc).name !== undefined;
+}
+
 export function wrapAsync(dispatch: Dispatch<DispatchObject>) {
   return (func: any, ...args: any) => {
     if (typeof func === 'object' && func.type) {
       dispatch(func);
       return;
+    }
+
+    if (isFuncType(func)) {
+      resolveDispatchFunc(func, dispatch);
     }
 
     const dispatchFunc = func(...args);
@@ -30,15 +38,19 @@ export function wrapAsync(dispatch: Dispatch<DispatchObject>) {
     }
 
     if (typeof dispatchFunc === 'function') {
-      const result = dispatchFunc(dispatch);
-
-      if (typeof result === 'object' && result.then) {
-        result.then((dispatchObject?: DispatchObject) => {
-          if (dispatchObject && dispatchObject.type) {
-            dispatch(dispatchObject);
-          }
-        });
-      }
+      resolveDispatchFunc(dispatchFunc, dispatch);
     }
   };
+}
+
+function resolveDispatchFunc(dispatchFunc: FuncType, dispatch: Dispatch<any>) {
+  const result = dispatchFunc(dispatch);
+
+  if (typeof result === 'object' && result.then) {
+    result.then((dispatchObject?: DispatchObject) => {
+      if (dispatchObject && dispatchObject.type) {
+        dispatch(dispatchObject);
+      }
+    });
+  }
 }

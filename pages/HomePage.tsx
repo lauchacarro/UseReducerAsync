@@ -13,7 +13,7 @@ export const HomePage: React.FC = () => {
   }, []);
 
   const handleOnClick = () => {
-    dispatch(setLoading, !state.cat.isLoading);
+    dispatch(setLoading(!state.cat.isLoading));
   };
 
   return (

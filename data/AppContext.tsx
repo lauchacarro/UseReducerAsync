@@ -9,12 +9,12 @@ type AppContextProviderProps = {
 
 export interface AppContextState {
   state: AppState;
-  dispatch: React.Dispatch<any>;
+  dispatch: (func: any, ...args: any) => void;
 }
 
 export const AppContext = createContext<AppContextState>({
   state: initialState,
-  dispatch: (func: any, ...args: any) => undefined,
+  dispatch: () => undefined,
 });
 
 export const AppContextProvider: React.FC<AppContextProviderProps> = (
